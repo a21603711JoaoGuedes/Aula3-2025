@@ -1,0 +1,5 @@
+/home/aluno/Aula3/scheduler_examples/cmake-build-debug/CMakeFiles/scheduler.dir
+/home/aluno/Aula3/scheduler_examples/cmake-build-debug/CMakeFiles/app.dir
+/home/aluno/Aula3/scheduler_examples/cmake-build-debug/CMakeFiles/app-io.dir
+/home/aluno/Aula3/scheduler_examples/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/aluno/Aula3/scheduler_examples/cmake-build-debug/CMakeFiles/rebuild_cache.dir
