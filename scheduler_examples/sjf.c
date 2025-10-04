@@ -77,5 +77,9 @@ void sjf_scheduler(uint32_t current_time_ms, queue_t *rq, pcb_t **cpu_task) {
     // 3) Se o CPU ficou livre, escolhemos da fila a tarefa mais curta
     if (*cpu_task == NULL) {
         *cpu_task = dequeue_shortest_job(rq); // única diferença para FIFO
+        if (*cpu_task && (*cpu_task)->ellapsed_time_ms == 0) {
+            printf("[METRIC] START pid=%d t_ms=%u\n", (*cpu_task)->pid, current_time_ms);
+            fflush(stdout);
+        }
     }
 }

@@ -49,6 +49,10 @@ void rr_scheduler(uint32_t current_time_ms, queue_t *rq, pcb_t **cpu_task) {
     // 4) Se o CPU ficou livre, buscar próxima tarefa da fila (igual ao FIFO)
     if (*cpu_task == NULL) {
         *cpu_task = dequeue_pcb(rq);
+        if (*cpu_task && (*cpu_task)->ellapsed_time_ms == 0) {
+            printf("[METRIC] START pid=%d t_ms=%u\n", (*cpu_task)->pid, current_time_ms);
+            fflush(stdout);
+        }
         rr_ticks_used = 0; // novo processo no CPU → reinicia contador de slice
     }
 }
