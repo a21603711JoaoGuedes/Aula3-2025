@@ -10,7 +10,9 @@
 // - por nível (em ticks): Q0=1, Q1=2, Q2=4
 // - Novas tarefas entram sempre em Q0
 // - Se não termina no quantum, preempta e desce 1 nível (até Q2)
-// - Boost simples: periodicamente, tudo em Q1/Q2 sobe para Q0 (evita starvation)
+// - Boost simples: periodicamente, tudo em Q1/Q2 sobe para Q0 para evitar starvation
+// 500 ms por time-slice = 50 ticks (TICKS_MS = 10 ms)
+#define MLFQ_QUANTUM_TICKS 50
 
 #define BOOST_PERIOD_MS 100
 
@@ -23,9 +25,6 @@ static int current_level = 0;   // 0:Q0, 1:Q1, 2:Q2 (válido quando há tarefa n
 static int current_q_used = 0;  // ticks já gastos no quantum atual
 static uint32_t last_boost_ms = 0;
 
-static inline int level_quantum(int lvl) {
-    return (lvl <= 0) ? 1 : (lvl == 1 ? 2 : 4);
-}
 
 static inline void enqueue_level(pcb_t *p, int lvl) {
     if (lvl <= 0) {
@@ -67,7 +66,6 @@ static void maybe_boost(uint32_t now_ms) {
 }
 
 void mlfq_scheduler(uint32_t current_time_ms, queue_t *rq, queue_t *blocked_q, pcb_t **cpu_task) {
-    (void)blocked_q; // não usado nesta versão simples
 
     // 1) Novas chegadas para Q0
     ingest_new_arrivals(rq);
@@ -95,7 +93,7 @@ void mlfq_scheduler(uint32_t current_time_ms, queue_t *rq, queue_t *blocked_q, p
             current_q_used = 0;
         } else {
             // Não terminou: se esgotou o quantum, preempta e desce 1 nível
-            if (current_q_used >= level_quantum(current_level)) {
+            if (current_q_used >=  MLFQ_QUANTUM_TICKS) {
                 int next_level = current_level < 2 ? current_level + 1 : 2;
                 enqueue_level(*cpu_task, next_level);
                 *cpu_task = NULL;
